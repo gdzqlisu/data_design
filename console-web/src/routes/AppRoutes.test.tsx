@@ -80,7 +80,9 @@ describe('路由守卫', () => {
 
     renderAt('/admin/approvals');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument());
+    // Dashboard 是 <Card title="概览">，标题不是 heading；
+    // 而且顶栏面包屑也有「概览」，所以断言卡片正文这句独有的文案
+    await waitFor(() => expect(screen.getByText(/决策流、规则与监控尚未接入/)).toBeInTheDocument());
   });
 
   it('被停用用户访问控制台会被送到登录页', async () => {

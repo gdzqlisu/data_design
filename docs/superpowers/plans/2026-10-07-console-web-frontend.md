@@ -217,7 +217,7 @@ cd console-web && npm install && npm test
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vitest/globals", "@testing-library/jest-dom", "vite/client"]
   },
   "include": ["src", "vite.config.ts"]
 }
@@ -1302,7 +1302,9 @@ describe('路由守卫', () => {
 
     renderAt('/admin/approvals');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument());
+    // Dashboard 是 <Card title="概览">，标题不是 heading；
+    // 而且顶栏面包屑也有「概览」，所以断言卡片正文这句独有的文案
+    await waitFor(() => expect(screen.getByText(/决策流、规则与监控尚未接入/)).toBeInTheDocument());
   });
 
   it('被停用用户访问控制台会被送到登录页', async () => {
@@ -2182,7 +2184,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 待审批、�
 创建 `console-web/src/layout/AppLayout.test.tsx`：
 
 ```tsx
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -2272,7 +2274,9 @@ describe('AppLayout', () => {
     renderLayout();
 
     await waitFor(() => expect(screen.getByText('概览内容')).toBeInTheDocument());
-    const placeholder = screen.getByText('规则中心').closest('li');
+    // 「规则中心」是分组标签的 <li>，本身没有 aria-disabled，
+    // 被禁用的是组里的菜单项。
+    const placeholder = screen.getByText('规则与策略').closest('li');
     expect(placeholder).toHaveAttribute('aria-disabled', 'true');
   });
 
@@ -2280,8 +2284,10 @@ describe('AppLayout', () => {
     stubActiveAdmin();
     renderLayout('/admin/approvals');
 
-    await waitFor(() => expect(screen.getByText('审批队列')).toBeInTheDocument());
-    expect(screen.getByRole('navigation', { name: '面包屑' })).toBeInTheDocument();
+    // 侧栏菜单项也叫「审批队列」，所以只在面包屑内部断言
+    const breadcrumb = await screen.findByRole('navigation', { name: '面包屑' });
+    expect(within(breadcrumb).getByText('系统管理')).toBeInTheDocument();
+    expect(within(breadcrumb).getByText('审批队列')).toBeInTheDocument();
   });
 
   it('用户菜单里的登出会调后端', async () => {
@@ -3217,3 +3223,7 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | 6 | Task 6 · `LocalLoginPage.test.tsx` | antd 对「正好两个汉字」的按钮会自动插空格，按钮的可访问名是 `登 录`，`getByRole('button', { name: '登录' })` 找不到 | 断言改成 `/登\s*录/`；不动 antd 的展示行为，页面测试也不经过 `ConfigProvider`，改测试更稳 |
 | 7 | Task 6 · `App.test.tsx` / `AppRoutes.test.tsx` | 真实登录页用 `ds-card__brand` 承载品牌名，没有 `h1 登录`，Task 5 的 3 处 `getByRole('heading', { name: '登录' })` 全部失效 | 三处改成断言登录页主操作 `getByRole('button', { name: /使用 GitHub 登录/ })`，并把这两个测试文件补进 Task 6 的 Files 列表 |
 | 8 | Task 7 · `StatusPages.test.tsx`「回调中转页换到令牌后进入控制台」 | 该用例挂载了 `AuthProvider`，bootstrap 自己也会打 `/api/auth/session` 与 `/api/auth/refresh`，而子组件 effect 先于父组件执行，实际调用序是 `refresh` → `session` → `/api/me`；计划里 3 个 `mockResolvedValueOnce` 全部错位——bootstrap 拿到 `{accessToken}` 当会话、在 `status.toLowerCase()` 上抛 TypeError 被自己的 catch 吞掉并置为 anonymous，断言只是被 `waitFor` 抢在状态翻转之前满足了，属于**假绿** | 改用按 URL 分发的 `mockImplementation`：回调页与 bootstrap 各自拿到正确响应，断言不再依赖调用顺序 |
+| 9 | Task 8 · `AppRoutes.test.tsx`「非管理员访问管理页会被送回 Dashboard」 | 断言 `getByRole('heading', { name: 'Dashboard' })`，但 Task 8 把 `DashboardPage` 换成了 `<Card title="概览">`——卡片标题不是 heading，且顶栏面包屑也有「概览」，`getByText('概览')` 会撞车 | 改成断言该卡片独有的正文文案 `getByText(/决策流、规则与监控尚未接入/)` |
+| 10 | Task 8 · `AppLayout.test.tsx`「未实现的菜单项不可点」 | 断言 `getByText('规则中心').closest('li')` 带 `aria-disabled`，但「规则中心」是 `type: 'group'` 的分组标签，它那个 `<li>` 没有该属性，被禁用的是组里的菜单项 | 指向真正的菜单项 `getByText('规则与策略')`，再断言最近的 `<li>` |
+| 11 | Task 8 · `AppLayout.test.tsx`「面包屑跟随路由」 | `getByText('审批队列')` 同时命中侧栏菜单项与页面标题，报「Found multiple elements」 | 先用 `findByRole('navigation', { name: '面包屑' })` 拿到面包屑，再用 `within(breadcrumb)` 在内部断言，导入补上 `within` |
+| 12 | Task 1 · `tsconfig.json` | `EnvBadge` 用 `import.meta.env.VITE_APP_ENV`，但 `types` 只列了 `vitest/globals` 与 `@testing-library/jest-dom`，`tsc` 报 TS2339「Property 'env' does not exist on type 'ImportMeta'」 | `types` 补 `vite/client`；Task 1 的 tsconfig 片段同步更新 |
