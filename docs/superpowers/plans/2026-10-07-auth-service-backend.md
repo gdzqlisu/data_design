@@ -1846,6 +1846,10 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 刷新令牌
 **设计要点：** 过滤器**不要**声明为 `@Component`，否则 Spring Boot 会把它额外注册到 servlet 容器，
 导致它执行两次。由 `SecurityConfig` 直接 `new` 出来只挂在安全链上。
 
+**检查顺序有讲究：** 先判账号状态，再判 `token_version`。禁用账号会自增 token_version，
+如果先比版本号，被禁用的用户拿到的是 401「令牌已撤销」，永远走不到 403 的账号状态分支，
+前端也就没法区分「重新登录」和「账号被停用」这两种完全不同的处置。
+
 **关于 CSRF：** 浏览器只访问 Vite/Nginx 那个 origin，API 走同源代理，且不依赖 Cookie 做鉴权
 （access token 在 `Authorization` 头里），因此关闭 CSRF 是安全的。计划 B 里 refresh token 走
 Cookie，刷新接口会额外校验 `Origin`，届时在 Task 10 一并处理。
@@ -2101,11 +2105,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (tokenVersions.currentTokenVersion(claims.userId()) != claims.tokenVersion()) {
-            reject(response, HttpServletResponse.SC_UNAUTHORIZED, "token_revoked", "访问令牌已被撤销，请重新登录");
-            return;
-        }
-
         User user = users.findById(claims.userId()).orElse(null);
         if (user == null) {
             reject(response, HttpServletResponse.SC_UNAUTHORIZED, "user_not_found", "账号不存在");
@@ -2114,6 +2113,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (user.getStatus() != UserStatus.ACTIVE) {
             reject(response, HttpServletResponse.SC_FORBIDDEN, "account_not_active",
                     "账号当前状态为 " + user.getStatus() + "，无法访问");
+            return;
+        }
+        if (tokenVersions.currentTokenVersion(claims.userId()) != claims.tokenVersion()) {
+            reject(response, HttpServletResponse.SC_UNAUTHORIZED, "token_revoked", "访问令牌已被撤销，请重新登录");
             return;
         }
 
