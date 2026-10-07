@@ -10,12 +10,13 @@
 **子项目 1：认证与账号体系 + 控制台骨架**
 
 - 后端认证服务（计划 A）：**已完成**，12 个 Task、64 个测试全部通过
-- 前端控制台（计划 B）：待开始
+- 前端控制台（计划 B）：**已完成**，10 个 Task、42 个测试全部通过
 
 | 产物 | 位置 |
 |---|---|
 | 设计文档 | `docs/superpowers/specs/2026-10-07-auth-and-console-shell-design.md` |
 | 后端实现计划 | `docs/superpowers/plans/2026-10-07-auth-service-backend.md` |
+| 前端实现计划 | `docs/superpowers/plans/2026-10-07-console-web-frontend.md` |
 | 视觉方向 | `docs/design/visual-style-options.html`（选定 A · 稳健金融蓝） |
 
 一句话概括这个子项目：GitHub OAuth 登录为主、首次登录待审批、管理员审批并分配角色、
@@ -37,7 +38,7 @@
 | 层 | 选型 |
 |---|---|
 | 后端 | Spring Boot 3.3.5 / **Java 17** / Spring Security 6 / Spring Data JPA / Flyway |
-| 前端 | React 18 / Vite / TypeScript / Ant Design 5（计划 B） |
+| 前端 | React 18 / Vite 5 / TypeScript 5 / Ant Design 5 / React Router 6 / Vitest |
 | 存储 | MySQL 8（用户、身份、审计）、Redis 7（令牌、限流、OAuth2 请求暂存） |
 | 测试 | JUnit 5 + AssertJ + MockMvc + Testcontainers（复用本机镜像） |
 | 运行 | Docker（本机 `mysql:8.0`、`redis:7-alpine`；nginx 走 edge profile） |
@@ -51,7 +52,7 @@ Java 版本说明：设计文档写的是 21，本机只有 8/11/17/25，Spring 
 auth-service/     Spring Boot 认证服务（已实现）
 deploy/           docker-compose（MySQL + Redis，nginx 在 edge profile）
 docs/             设计文档、实现计划与视觉参考
-console-web/      React 控制台（计划 B，尚未创建）
+console-web/      React 控制台（已实现）
 ```
 
 ## 本地运行
@@ -99,8 +100,37 @@ cd auth-service && ./scripts/mvn spring-boot:run
 | `BREAK_GLASS_ADMIN_USERNAME` / `BREAK_GLASS_ADMIN_PASSWORD_HASH` | 破窗管理员 | 空（不创建） |
 | `COOKIE_SECURE` | 刷新 Cookie 是否带 `Secure` | `false` |
 
+### 5. 起前端控制台（开发期）
+
+```bash
+cd console-web && npm install && npm run dev
+```
+
+开发服务器在 5173，`/api` 由 Vite 代理到 8080，浏览器侧始终是同一个 origin。
+
+### 6. 生产构建与 Nginx 形态
+
+```bash
+cd console-web && npm run build
+docker pull nginx:1.27-alpine
+cd .. && CONSOLE_BASE_URL=http://localhost docker compose -f deploy/docker-compose.yml --profile edge up -d nginx
+```
+
+Nginx 在 80 端口同时托管静态产物与反代 `/api`。**此时必须把 `CONSOLE_BASE_URL`
+设成浏览器实际访问的地址**（即 `http://localhost`），否则刷新接口的 `Origin` 校验会拒绝请求。
+80 端口被占用时用 `NGINX_PORT` 换端口（compose 里是可覆盖的）。
+
+## 前端已实现的能力
+
+- GitHub OAuth 登录入口，回调错误按 `?error=` 映射成人话提示
+- 首登状态机：`PENDING` / `REJECTED` / `DISABLED` 各自落到对应页面，只有 `ACTIVE` 进控制台
+- access token 只放内存，刷新页面靠 httpOnly Cookie 静默续期；401 自动续期一次再重试原请求
+- 控制台骨架：侧栏分组菜单、顶栏面包屑、环境标识（`VITE_APP_ENV`）、用户菜单
+- 管理员审批队列（行内选角色，一次完成「通过 + 赋角色」）与用户管理（改角色 / 禁用）
+- 破窗登录页 `/login/local` 只认路径，不出现在导航里
+
 ## 本地环境要求
 
 - JDK 17（Homebrew `openjdk@17`）、Maven 3.9+
-- Node.js 20+（计划 B 用）
+- Node.js 20+（实测 v24.14）
 - Docker Desktop（复用本机已有的 `mysql:8.0` 与 `redis:7-alpine`）

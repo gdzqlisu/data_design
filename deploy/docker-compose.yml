@@ -32,14 +32,20 @@ services:
       timeout: 3s
       retries: 30
 
-  # 开发期不需要 nginx：Vite 代理已保证浏览器同源。
-  # 生产/联调时先 docker pull nginx:1.27-alpine，再用 edge profile 启动。
+  # 生产/联调形态：Nginx 同时托管前端静态产物并反代 /api。
+  # 首次使用前执行一次 docker pull nginx:1.27-alpine。
+  # 注意：这种形态下浏览器 origin 是 http://localhost，
+  # 必须同步把 auth-service 的 CONSOLE_BASE_URL 设成 http://localhost，
+  # 否则刷新接口会因 Origin 不一致返回 403 cross_origin。
   nginx:
     image: nginx:1.27-alpine
     container_name: data-design-nginx
     profiles: ["edge"]
     ports:
-      - "80:80"
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../console-web/dist:/usr/share/nginx/html:ro
 
 volumes:
   mysql-data:

@@ -132,7 +132,7 @@ deploy/docker-compose.yml          计划 A 已有，Task 10 给 nginx 服务挂
 - Create: `console-web/src/App.tsx`
 - Test: `console-web/src/App.test.tsx`
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/App.test.tsx`：
 
@@ -151,7 +151,7 @@ describe('App', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm install && npm test
@@ -160,7 +160,7 @@ cd console-web && npm install && npm test
 预期：失败。首次是 `npm install` 找不到 `package.json`（目录还不存在），
 补上 `package.json` 后是 `Cannot find module './App'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/package.json`：
 
@@ -341,7 +341,7 @@ createRoot(container).render(
 );
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -349,7 +349,7 @@ cd console-web && npm test
 
 预期：`Test Files 1 passed`、`Tests 1 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 工程骨架与首个渲染测试"
@@ -368,7 +368,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 工程骨架�
 **设计要点：** spec §6.3 的 token 只写在一个文件里，测试断言的就是那份表；
 `antdTheme.ts` 只负责翻译，不重新定义颜色。这样换风格时只改 `tokens.ts`。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/theme/antdTheme.test.ts`：
 
@@ -404,7 +404,7 @@ describe('设计 token', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -412,7 +412,7 @@ cd console-web && npm test
 
 预期：失败，`Cannot find module './antdTheme'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/theme/tokens.ts`：
 
@@ -561,7 +561,7 @@ body {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -569,7 +569,7 @@ cd console-web && npm test
 
 预期：2 个测试文件、3 个测试全部通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 设计 token 与 Ant Design 主题（风格 A）"
@@ -587,7 +587,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 设计 token �
 `401` 时先静默续期一次再重试原请求；续期失败才通知上层「会话丢了」。
 `renewSession()` 自己**不走** `request()`，否则会递归。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/api/client.test.ts`：
 
@@ -696,7 +696,7 @@ describe('api client', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -704,7 +704,7 @@ cd console-web && npm test
 
 预期：失败，`Cannot find module './client'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/api/client.ts`：
 
@@ -810,7 +810,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -818,7 +818,7 @@ cd console-web && npm test
 
 预期：`Tests 9 passed`（Task 1 的 1 个 + Task 2 的 2 个 + 本任务 6 个）。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): API 客户端与统一错误契约"
@@ -837,7 +837,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): API 客户端�
 只有 `ACTIVE` 才去换 access token。反过来先 `refresh` 的话，`PENDING` 用户会拿到 403，
 前端就只能靠错误码猜自己的状态。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/auth/AuthContext.test.tsx`：
 
@@ -993,7 +993,7 @@ describe('AuthProvider', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -1001,7 +1001,7 @@ cd console-web && npm test
 
 预期：失败，`Cannot find module './AuthContext'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/api/auth.ts`：
 
@@ -1187,7 +1187,7 @@ export function useAuth(): AuthContextValue {
 export type { Role };
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -1195,7 +1195,7 @@ cd console-web && npm test
 
 预期：`Tests 14 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 会话状态机与启动引导"
@@ -1215,7 +1215,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 会话状态�
 **设计要点：** 会话校验期间渲染占位文案，**不闪白屏**（spec §6.2）。
 页面级组件在 Task 6/7 才实现，本任务先用最小占位页把路由与守卫跑通。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/routes/AppRoutes.test.tsx`：
 
@@ -1345,7 +1345,7 @@ describe('路由守卫', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -1353,7 +1353,7 @@ cd console-web && npm test
 
 预期：失败，`Cannot find module './AppRoutes'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/routes/RequireAuth.tsx`：
 
@@ -1585,7 +1585,7 @@ export function ApprovalsPage() {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test && npm run typecheck
@@ -1595,7 +1595,7 @@ cd console-web && npm test && npm run typecheck
 本任务的类型错误（`SessionStatus` 写成大写枚举）只有 typecheck 抓得到，
 `npm test` 因为运行时值是小写反而全绿，所以这一步必须带上 typecheck。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 路由表与登录/状态守卫"
@@ -1616,7 +1616,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 路由表与�
 **设计要点：** 登录页只暴露 GitHub 一个入口；破窗入口 `/login/local` 在导航与页面上都不出现，
 只有知道路径的人能进（spec §6.1）。后端所有回调错误都用 `?error=` 传回来，这里做一次文案映射。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/pages/LoginPage.test.tsx`：
 
@@ -1764,7 +1764,7 @@ describe('LocalLoginPage', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -1772,7 +1772,7 @@ cd console-web && npm test
 
 预期：失败，`Unable to find a role="button" with name /使用 GitHub 登录/`（页面还是占位实现）。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 把 `console-web/src/pages/LoginPage.tsx` 覆盖为：
 
@@ -1892,7 +1892,7 @@ export function LocalLoginPage() {
     "@ant-design/icons": "5.6.1",
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm install && npm test
@@ -1900,7 +1900,7 @@ cd console-web && npm install && npm test
 
 预期：`Tests 26 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): GitHub 登录页与破窗登录页"
@@ -1919,7 +1919,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): GitHub 登录�
 **设计要点：** `/auth/callback` 是后端 GitHub 回调后落地的地址：此时 Cookie 已经写好，
 页面负责「用 Cookie 换 access token → 拉资料 → 进控制台」。这一步失败就退回登录页并带 `error`。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/pages/StatusPages.test.tsx`：
 
@@ -2031,7 +2031,7 @@ describe('状态页', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -2039,7 +2039,7 @@ cd console-web && npm test
 
 预期：失败，`Unable to find a role="button" with name "退出登录"`（页面仍是占位）。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 把 `console-web/src/pages/PendingPage.tsx` 覆盖为：
 
@@ -2151,7 +2151,7 @@ export function AuthCallbackPage() {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -2159,7 +2159,7 @@ cd console-web && npm test
 
 预期：`Tests 30 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 待审批、已拒绝与回调中转页"
@@ -2181,7 +2181,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 待审批、�
 取 `VITE_APP_ENV`，缺省按 `dev` 处理——宁可把生产误标成开发，也不要反过来。
 除「系统管理 → 审批 / 用户」外的菜单项一律 `disabled`，点了不跳转，避免假装功能已存在。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/layout/AppLayout.test.tsx`：
 
@@ -2308,7 +2308,7 @@ describe('AppLayout', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -2316,7 +2316,7 @@ cd console-web && npm test
 
 预期：失败，`Unable to find an element with the text: 决策中心`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/layout/EnvBadge.tsx`：
 
@@ -2541,7 +2541,7 @@ export function DashboardPage() {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -2549,7 +2549,7 @@ cd console-web && npm test
 
 预期：`Tests 35 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 控制台骨架（侧栏、顶栏、环境标识）"
@@ -2570,7 +2570,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 控制台骨�
 全局 toast 在测试里难断言，而且管理员在批量操作时更需要「错在哪一行」的上下文。
 审批通过时把角色选在行内，一次动作完成「通过 + 赋角色」（spec §5.3）。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `console-web/src/pages/ApprovalsPage.test.tsx`：
 
@@ -2753,7 +2753,7 @@ describe('UsersPage', () => {
 });
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd console-web && npm test
@@ -2761,7 +2761,7 @@ cd console-web && npm test
 
 预期：失败，`Cannot find module '../api/admin'`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `console-web/src/api/admin.ts`：
 
@@ -3050,7 +3050,7 @@ export function UsersPage() {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd console-web && npm test
@@ -3058,7 +3058,7 @@ cd console-web && npm test
 
 预期：`Tests 42 passed`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web && git commit -m "feat(console-web): 审批队列与用户管理"
@@ -3078,7 +3078,7 @@ cd .. && git add console-web && git commit -m "feat(console-web): 审批队列�
 和刷新接口的 `Origin` 校验都会失效。`auth-service` 目前跑在宿主机上（不在 compose 里），
 所以 Nginx 反代目标是 `host.docker.internal:8080`；将来把它容器化后改成服务名即可。
 
-- [ ] **Step 1: 先跑一次完整校验，确认当前状态**
+- [x] **Step 1: 先跑一次完整校验，确认当前状态**
 
 ```bash
 cd console-web && npm run typecheck && npm test
@@ -3086,18 +3086,19 @@ cd console-web && npm run typecheck && npm test
 
 预期：类型检查无输出、`Tests 42 passed`。
 
-- [ ] **Step 2: 构建，确认失败点**
+- [x] **Step 2: 构建**
 
 ```bash
 cd console-web && npm run build
 ```
 
-预期：**失败**——`tsc` 会报出测试文件里 `import type { ReactElement }` 之类的问题之前，
-先看有没有 `src/test/setup.ts` 被当成编译输入等问题。若直接成功，说明无需修，
-继续 Step 3；若报 `dist` 与源文件混编之类的错误，在 `tsconfig.json` 的 `include`
-里排除 `src/test`（构建产物不该包含测试）。
+实测：**一次通过**。原先担心 `tsc` 会把 `src/test/setup.ts` 与测试文件当编译输入报错，
+实际 `@types/react` 提供了全局 `React` 命名空间，`include: ["src", ...]` 只是让测试一起过类型，
+并不出错，所以不需要排除 `src/test`。唯一输出是 Vite 的告警：
+antd 让主包约 980 kB（gzip 311 kB）超过 500 kB 提示线。内部工具可接受，
+真要优化再上 `manualChunks` 拆 antd，本任务不做。
 
-- [ ] **Step 3: 写实现**
+- [x] **Step 3: 写实现**
 
 创建 `deploy/nginx/default.conf`：
 
@@ -3171,7 +3172,7 @@ Nginx 在 80 端口同时托管静态产物与反代 `/api`。**此时必须把 
 设成浏览器实际访问的地址**（即 `http://localhost`），否则刷新接口的 `Origin` 校验会拒绝请求。
 ```
 
-- [ ] **Step 4: 验证构建产物**
+- [x] **Step 4: 验证构建产物**
 
 ```bash
 cd console-web && npm run build && ls -la dist/index.html dist/assets | head
@@ -3180,7 +3181,7 @@ cd console-web && npm run build && ls -la dist/index.html dist/assets | head
 预期：`dist/index.html` 存在，`dist/assets/` 下有带哈希的 js 与 css。
 把 `dist/index.html` 里引用的资源名与 `dist/assets/` 实际文件名对一遍，确认没有 404 风险。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): 前端生产构建与 Nginx 反代配置"
@@ -3232,3 +3233,16 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | 13 | Task 9 · `ApprovalsPage.tsx` | 从 antd 导入了 `Tag` 但表格列里根本没用到，`tsc` 报 TS6133 | 去掉 `Tag` 导入（`UsersPage.tsx` 里的 `Tag` 用到了，保留） |
 | 14 | Task 9 · `ApprovalsPage.test.tsx` / `UsersPage.test.tsx` | 同 Task 6 的问题：「通过/拒绝/保存/禁用/确定」都是两个汉字，antd 会插空格（`通 过`），按精确名字取按钮全部失败 | 这些按钮统一改成 `/通\s*过/`、`/拒\s*绝/`、`/保\s*存/`、`/禁\s*用/`、`/确\s*定/` |
 | 15 | Task 5 · `AppRoutes.test.tsx`「管理员能进入审批队列」 | 断言 `heading 审批队列`，但 Task 9 把该页换成 `<Card title="审批队列">`（卡片标题不是 heading），且侧栏有同名菜单项，`getByText` 也会撞车 | 改断言该页加载完成后的空态文案「当前没有待审批的申请」，顺带验证它真的发了请求 |
+| 16 | Task 10 · Step 2 的预期 | 计划写「`npm run build` 预期失败」，担心 `tsc` 把 `src/test` 当编译输入、或 `React.ReactElement` 找不到命名空间 | 实测一次通过：`@types/react` 提供全局 `React` 命名空间，测试文件一起过类型也没问题，无需在 `include` 里排除 `src/test`；Step 2 文案已按实测改写，并记录 antd 主包 ~980 kB（gzip 311 kB）的 Vite 体积告警 |
+### 启动验证（Task 10 实测）
+
+`NGINX_PORT=18080 docker compose -f deploy/docker-compose.yml --profile edge up -d nginx` 后：
+
+| 请求 | 结果 |
+|---|---|
+| `GET /` | 200，返回 `dist/index.html` |
+| `GET /admin/approvals`（SPA 深链） | 200，`try_files` 回落命中 index.html |
+| `GET /assets/index-*.js` | 200，981785 字节 |
+| `GET /api/me`（后端未起） | 502，nginx 日志为 `connect() failed (111: Connection refused)`，上游解析到 `host.docker.internal` → 192.168.65.254:8080 |
+
+`dist/index.html` 引用 `/assets/index-DDYVLzCl.js` 与 `/assets/index-tlhGNd0v.css`，与 `dist/assets/` 下的实际文件名一致，无 404 风险。
