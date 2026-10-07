@@ -1076,10 +1076,12 @@ import {
   loginWithLocal as loginWithLocalRequest,
   logout as logoutRequest,
 } from '../api/auth';
-import type { CurrentUser, Role, UserStatus } from '../api/auth';
+import type { CurrentUser, Role } from '../api/auth';
 import { ApiError, renewSession, setAccessToken, setSessionLostHandler } from '../api/client';
 
-export type SessionStatus = 'loading' | 'anonymous' | UserStatus | 'active';
+// 会话状态对外一律小写：AuthContext 用 session.status.toLowerCase() 落状态，
+// RequireAuth 也只比较小写，写成 UserStatus 原样（大写）会让守卫分支永远不成立。
+export type SessionStatus = 'loading' | 'anonymous' | 'active' | 'pending' | 'rejected' | 'disabled';
 
 type AuthContextValue = {
   status: SessionStatus;
@@ -1301,6 +1303,14 @@ describe('路由守卫', () => {
     renderAt('/admin/approvals');
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument());
+  });
+
+  it('被停用用户访问控制台会被送到登录页', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(session('DISABLED', 'MEMBER')));
+
+    renderAt('/');
+
+    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
   });
 
   it('管理员能进入审批队列', async () => {
@@ -1534,11 +1544,16 @@ export function AppLayout() {
 
 再把 Task 5 要求的两个最小可实现补上——登录页与待审批页（其余留在后续任务）：
 
-`console-web/src/pages/LoginPage.tsx`：
+`console-web/src/pages/LoginPage.tsx`（`App.test.tsx` 要断言产品名，占位版也得带上它）：
 
 ```tsx
 export function LoginPage() {
-  return <h1>登录</h1>;
+  return (
+    <>
+      <p>信贷风控决策引擎</p>
+      <h1>登录</h1>
+    </>
+  );
 }
 ```
 
@@ -1569,10 +1584,12 @@ export function ApprovalsPage() {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-cd console-web && npm test
+cd console-web && npm test && npm run typecheck
 ```
 
-预期：`Tests 20 passed`。
+预期：`Tests 20 passed`，且 `npm run typecheck` 无输出——
+本任务的类型错误（`SessionStatus` 写成大写枚举）只有 typecheck 抓得到，
+`npm test` 因为运行时值是小写反而全绿，所以这一步必须带上 typecheck。
 
 - [ ] **Step 5: 提交**
 
@@ -3175,3 +3192,6 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | # | 位置 | 现象 | 处理 |
 |---|---|---|---|
 | 1 | Task 3 · `api/client.test.ts`「把错误响应翻译成带 code 的 ApiError」 | 同一处用 `mockResolvedValue` 复用同一个 `Response` 实例，`request()` 连调两次：第一次已把 body 读掉，第二次抛 `TypeError: Body is unusable`，测试拿到的不是 `ApiError` | 改为 `mockImplementation(() => Promise.resolve(jsonResponse(...)))`，每次调用都产出新的 `Response`。这是测试写法问题，实现无需改动 |
+| 2 | Task 5 · 占位 `LoginPage.tsx` | 计划给占位页只留了 `<h1>登录</h1>`，但 `App.test.tsx` 同时断言产品名，Task 5 阶段 `App.test.tsx` 必挂 | 占位页补上 `<p>信贷风控决策引擎</p>`；Task 6 的真实登录页本来就有 `ds-card__brand` 品牌名，替换后断言继续成立 |
+| 3 | Task 5 · `AppRoutes.test.tsx` | 计划预期 Task 5 新增 6 个路由测试（累计 20），但代码块里只有 5 个：`RequireAuth` 的 `disabled` 分支没有任何测试覆盖 | 补一个「被停用用户访问控制台会被送到登录页」，覆盖 `status === 'disabled'` 分支；累计数回到 20，Task 6–9 的预期数（26/30/35/42）继续成立 |
+| 4 | Task 5 · `AuthContext.tsx` 的 `SessionStatus` | 计划写成 `'loading' \| 'anonymous' \| UserStatus \| 'active'`，但 `AuthContext` 落状态时调了 `session.status.toLowerCase()`，`RequireAuth` 也只比较小写；类型与运行时值不一致，`tsc` 报 TS2367「"rejected" 与 UserStatus 无重叠」，守卫分支在类型层面永远不成立 | 改成字面量小写联合 `'loading' \| 'anonymous' \| 'active' \| 'pending' \| 'rejected' \| 'disabled'`，并去掉不再使用的 `UserStatus` 导入；Task 5 Step 4 补跑 `npm run typecheck` |

@@ -8,10 +8,12 @@ import {
   loginWithLocal as loginWithLocalRequest,
   logout as logoutRequest,
 } from '../api/auth';
-import type { CurrentUser, Role, UserStatus } from '../api/auth';
+import type { CurrentUser, Role } from '../api/auth';
 import { ApiError, renewSession, setAccessToken, setSessionLostHandler } from '../api/client';
 
-export type SessionStatus = 'loading' | 'anonymous' | UserStatus | 'active';
+// 会话状态对外一律小写：AuthContext 用 session.status.toLowerCase() 落状态，
+// RequireAuth 也只比较小写，写成 UserStatus 原样（大写）会让守卫分支永远不成立。
+export type SessionStatus = 'loading' | 'anonymous' | 'active' | 'pending' | 'rejected' | 'disabled';
 
 type AuthContextValue = {
   status: SessionStatus;
