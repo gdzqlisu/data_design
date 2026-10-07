@@ -1338,7 +1338,9 @@ describe('路由守卫', () => {
 
     renderAt('/admin/approvals');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '审批队列' })).toBeInTheDocument());
+    // ApprovalsPage 现在是 <Card title="审批队列">，卡片标题不是 heading，
+    // 而且侧栏也有同名菜单项，所以断言它加载完成后的空态文案
+    await waitFor(() => expect(screen.getByText('当前没有待审批的申请')).toBeInTheDocument());
   });
 });
 ```
@@ -2616,7 +2618,7 @@ describe('ApprovalsPage', () => {
     expect(await screen.findByText('octocat')).toBeInTheDocument();
 
     const row = screen.getByText('octocat').closest('tr') as HTMLElement;
-    await userEvent.click(within(row).getByRole('button', { name: '通过' }));
+    await userEvent.click(within(row).getByRole('button', { name: /通\s*过/ }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     const [url, init] = fetchMock.mock.calls[1];
@@ -2635,7 +2637,7 @@ describe('ApprovalsPage', () => {
 
     render(<ApprovalsPage />);
     await screen.findByText('octocat');
-    await userEvent.click(screen.getByRole('button', { name: '拒绝' }));
+    await userEvent.click(screen.getByRole('button', { name: /拒\s*绝/ }));
 
     await waitFor(() => expect(fetchMock.mock.calls[1][0]).toBe('/api/admin/users/2/reject'));
   });
@@ -2651,7 +2653,7 @@ describe('ApprovalsPage', () => {
 
     render(<ApprovalsPage />);
     await screen.findByText('octocat');
-    await userEvent.click(screen.getByRole('button', { name: '通过' }));
+    await userEvent.click(screen.getByRole('button', { name: /通\s*过/ }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('不能审批自己');
   });
@@ -2714,7 +2716,7 @@ describe('UsersPage', () => {
     const row = screen.getByText('alice').closest('tr') as HTMLElement;
     await userEvent.click(within(row).getByRole('combobox'));
     await userEvent.click(await screen.findByTitle('只读'));
-    await userEvent.click(within(row).getByRole('button', { name: '保存' }));
+    await userEvent.click(within(row).getByRole('button', { name: /保\s*存/ }));
 
     await waitFor(() => expect(fetchMock.mock.calls[1][0]).toBe('/api/admin/users/5/role'));
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ role: 'VIEWER' });
@@ -2743,8 +2745,8 @@ describe('UsersPage', () => {
     render(<UsersPage />);
     await screen.findByText('alice');
     const row = screen.getByText('alice').closest('tr') as HTMLElement;
-    await userEvent.click(within(row).getByRole('button', { name: '禁用' }));
-    await userEvent.click(await screen.findByRole('button', { name: '确定' }));
+    await userEvent.click(within(row).getByRole('button', { name: /禁\s*用/ }));
+    await userEvent.click(await screen.findByRole('button', { name: /确\s*定/ }));
 
     await waitFor(() => expect(fetchMock.mock.calls[1][0]).toBe('/api/admin/users/5/disable'));
   });
@@ -2802,7 +2804,7 @@ export function disableUser(id: number): Promise<UserSummary> {
 把 `console-web/src/pages/ApprovalsPage.tsx` 覆盖为：
 
 ```tsx
-import { Alert, Button, Card, Select, Space, Table, Tag } from 'antd';
+import { Alert, Button, Card, Select, Space, Table } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 
 import { approveUser, listUsers, rejectUser } from '../api/admin';
@@ -3227,3 +3229,6 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | 10 | Task 8 · `AppLayout.test.tsx`「未实现的菜单项不可点」 | 断言 `getByText('规则中心').closest('li')` 带 `aria-disabled`，但「规则中心」是 `type: 'group'` 的分组标签，它那个 `<li>` 没有该属性，被禁用的是组里的菜单项 | 指向真正的菜单项 `getByText('规则与策略')`，再断言最近的 `<li>` |
 | 11 | Task 8 · `AppLayout.test.tsx`「面包屑跟随路由」 | `getByText('审批队列')` 同时命中侧栏菜单项与页面标题，报「Found multiple elements」 | 先用 `findByRole('navigation', { name: '面包屑' })` 拿到面包屑，再用 `within(breadcrumb)` 在内部断言，导入补上 `within` |
 | 12 | Task 1 · `tsconfig.json` | `EnvBadge` 用 `import.meta.env.VITE_APP_ENV`，但 `types` 只列了 `vitest/globals` 与 `@testing-library/jest-dom`，`tsc` 报 TS2339「Property 'env' does not exist on type 'ImportMeta'」 | `types` 补 `vite/client`；Task 1 的 tsconfig 片段同步更新 |
+| 13 | Task 9 · `ApprovalsPage.tsx` | 从 antd 导入了 `Tag` 但表格列里根本没用到，`tsc` 报 TS6133 | 去掉 `Tag` 导入（`UsersPage.tsx` 里的 `Tag` 用到了，保留） |
+| 14 | Task 9 · `ApprovalsPage.test.tsx` / `UsersPage.test.tsx` | 同 Task 6 的问题：「通过/拒绝/保存/禁用/确定」都是两个汉字，antd 会插空格（`通 过`），按精确名字取按钮全部失败 | 这些按钮统一改成 `/通\s*过/`、`/拒\s*绝/`、`/保\s*存/`、`/禁\s*用/`、`/确\s*定/` |
+| 15 | Task 5 · `AppRoutes.test.tsx`「管理员能进入审批队列」 | 断言 `heading 审批队列`，但 Task 9 把该页换成 `<Card title="审批队列">`（卡片标题不是 heading），且侧栏有同名菜单项，`getByText` 也会撞车 | 改断言该页加载完成后的空态文案「当前没有待审批的申请」，顺带验证它真的发了请求 |

@@ -116,6 +116,8 @@ describe('路由守卫', () => {
 
     renderAt('/admin/approvals');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '审批队列' })).toBeInTheDocument());
+    // ApprovalsPage 现在是 <Card title="审批队列">，卡片标题不是 heading，
+    // 而且侧栏也有同名菜单项，所以断言它加载完成后的空态文案
+    await waitFor(() => expect(screen.getByText('当前没有待审批的申请')).toBeInTheDocument());
   });
 });
