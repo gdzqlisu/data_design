@@ -4045,6 +4045,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -4147,8 +4148,10 @@ class AdminUserControllerTest extends IntegrationTestBase {
                         .content(mapper.writeValueAsString(new RoleChangeRequest(Role.VIEWER))))
                 .andExpect(status().isOk());
 
+        // 改角色只动 token_version，账号仍 ACTIVE，所以是 401 token_revoked。
         mvc.perform(get("/api/me").header(HttpHeaders.AUTHORIZATION, memberToken))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("token_revoked"));
     }
 
     @Test
@@ -4162,8 +4165,11 @@ class AdminUserControllerTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("DISABLED"));
 
+        // 403 而不是 401：禁用账号会自增 token_version，但过滤器先判账号状态，
+        // 这样前端能区分「账号被停用」和「令牌过期需重新登录」。
         mvc.perform(get("/api/me").header(HttpHeaders.AUTHORIZATION, memberToken))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("account_not_active"));
     }
 
     @Test
