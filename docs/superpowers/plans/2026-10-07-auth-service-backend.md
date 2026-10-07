@@ -475,7 +475,10 @@ CREATE TABLE users (
     updated_at     DATETIME(6)  NOT NULL,
     last_login_at  DATETIME(6)  NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_users_email (email),
+    -- 邮箱故意不加唯一约束：GitHub 返回的邮箱未经验证，
+    -- 两个不同身份共用同一邮箱是可能的，此时应该各建各的账号，
+    -- 而不是把第二个人挡在门外或错误合并成同一个账号。
+    KEY idx_users_email (email),
     KEY idx_users_status (status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
