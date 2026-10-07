@@ -17,6 +17,12 @@ spring:
       host: localhost
       port: 6379
 
+auth:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-0123456789-0123456789-abcdef}
+    access-ttl: 15m
+    issuer: data-design
+
 management:
   endpoints:
     web:
