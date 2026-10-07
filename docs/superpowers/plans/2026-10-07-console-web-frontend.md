@@ -627,9 +627,13 @@ describe('api client', () => {
   });
 
   it('把错误响应翻译成带 code 的 ApiError', async () => {
+    // 每次调用都要新的 Response：body 只能读一次，复用同一个实例第二次会抛
+    // TypeError: Body is unusable。
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(jsonResponse(403, { code: 'account_not_active', message: '账号不可用' })),
+      vi.fn().mockImplementation(() =>
+        Promise.resolve(jsonResponse(403, { code: 'account_not_active', message: '账号不可用' })),
+      ),
     );
 
     await expect(request('/api/me')).rejects.toMatchObject({
@@ -3165,3 +3169,9 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 - 错误码（`unauthenticated`、`invalid_credentials`、`too_many_attempts`、`account_not_active`、
   `cannot_modify_self`、`user_not_found`、`cross_origin`）都来自后端 `ApiException`，
   前端只消费不臆造
+
+### 执行过程中新发现并修正的问题
+
+| # | 位置 | 现象 | 处理 |
+|---|---|---|---|
+| 1 | Task 3 · `api/client.test.ts`「把错误响应翻译成带 code 的 ApiError」 | 同一处用 `mockResolvedValue` 复用同一个 `Response` 实例，`request()` 连调两次：第一次已把 body 读掉，第二次抛 `TypeError: Body is unusable`，测试拿到的不是 `ApiError` | 改为 `mockImplementation(() => Promise.resolve(jsonResponse(...)))`，每次调用都产出新的 `Response`。这是测试写法问题，实现无需改动 |
