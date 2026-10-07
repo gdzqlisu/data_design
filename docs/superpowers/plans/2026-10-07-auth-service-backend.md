@@ -42,6 +42,24 @@ Testcontainers 与 docker-compose 只使用本机已有镜像，固定显式 tag
 | MySQL | `mysql:8.0` | 是 |
 | Redis | `redis:7-alpine` | 是 |
 
+### Docker Engine 29 必须显式声明 API 版本
+
+本机 Docker Engine 是 29.3.1，`MinimumAPIVersion` 是 **1.40**：
+
+```bash
+docker version --format '{{.Server.APIVersion}} min={{.Server.MinAPIVersion}}'   # 1.54 min=1.40
+curl --unix-socket /var/run/docker.sock http://localhost/v1.32/info              # 400
+curl --unix-socket /var/run/docker.sock http://localhost/v1.40/info              # 200
+```
+
+Testcontainers 1.20.3 内置的 docker-java 默认请求 `/v1.32/...`，会被引擎判成 400，
+于是所有容器都起不来，报错是很容易误导人的
+`Could not find a valid Docker environment`。Task 2 在 surefire 配置里加
+`<systemPropertyVariables><api.version>1.44</api.version></systemPropertyVariables>` 解决。
+
+如果换机器后出现同样的 "Could not find a valid Docker environment"，
+先用上面两条 curl 确认是不是 API 版本问题，再调整该值。
+
 ---
 
 ## 文件结构
@@ -538,6 +556,21 @@ CREATE TABLE audit_logs (
     </dependency>
 ```
 
+在 `auth-service/pom.xml` 的 `<build><plugins>` 里、`spring-boot-maven-plugin` 之后追加
+（原因见「环境前提 · Docker Engine 29 必须显式声明 API 版本」）：
+
+```xml
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <api.version>1.44</api.version>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+```
+
 把 `auth-service/src/main/resources/application.yml` 覆盖为：
 
 ```yaml
@@ -584,6 +617,8 @@ cd auth-service && ./scripts/mvn -q test
 若报找不到镜像，确认 `docker images` 里有 `mysql:8.0` 与 `redis:7-alpine`。
 若 Testcontainers 仍尝试联网拉取，检查镜像名与本地 tag 是否完全一致（本地没有 `mysql:8.0.36`，
 所以绝不能省掉显式 tag）。
+若报 `Could not find a valid Docker environment`，八成是 API 版本而不是 Docker 没起来，
+按「环境前提」那一节的两条 curl 自查。
 
 - [ ] **Step 5: 提交**
 

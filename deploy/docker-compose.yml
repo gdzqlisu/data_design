@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: data-design-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: data_design
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    container_name: data-design-redis
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  # 开发期不需要 nginx：Vite 代理已保证浏览器同源。
+  # 生产/联调时先 docker pull nginx:1.27-alpine，再用 edge profile 启动。
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: data-design-nginx
+    profiles: ["edge"]
+    ports:
+      - "80:80"
+
+volumes:
+  mysql-data:

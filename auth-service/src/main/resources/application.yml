@@ -1,6 +1,22 @@
 server:
   port: 8080
 
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/data_design?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: app
+    password: app
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 management:
   endpoints:
     web:
