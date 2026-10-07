@@ -18,6 +18,7 @@ spring:
       port: 6379
 
 auth:
+  refresh-ttl: 7d
   jwt:
     secret: ${JWT_SECRET:dev-only-secret-0123456789-0123456789-abcdef}
     access-ttl: 15m
