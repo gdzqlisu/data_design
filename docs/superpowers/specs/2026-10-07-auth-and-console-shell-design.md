@@ -96,11 +96,15 @@ data_design/
 - MySQL 用命名卷持久化；Redis 仅作缓存与令牌存储，不做持久化
 - 端口映射到宿主机 3306 / 6379，开发期 `auth-service` 与 `console-web` 在宿主机跑，走 `localhost`
 
-**Nginx：本机没有对应镜像，也没有本机 nginx 二进制。** 处理方式：
+**Nginx：本机没有对应镜像，也没有本机 nginx 二进制，需要从 Docker Hub 拉取。**
 
-- 开发期不需要 nginx —— Vite dev server 代理 `/api` → 8080，浏览器侧已经是同源
-- 生产/联调需要时再补：或联网拉取 `nginx:1.27-alpine`，或由你提供离线镜像后 `docker load`
-- 在确定之前，compose 中的 nginx 服务放在独立的 `edge` profile 下，默认不启动，不影响开发
+| 组件 | 使用镜像 | 获取方式 |
+|---|---|---|
+| Nginx | `nginx:1.27-alpine` | `docker pull nginx:1.27-alpine` |
+
+- 开发期不启用 —— Vite dev server 代理 `/api` → 8080，浏览器侧已经是同源，不需要反代
+- compose 中 nginx 服务放在 `edge` profile 下，首次使用前执行一次 `docker pull`，
+  之后走本机镜像，不再重复拉取
 
 ---
 
