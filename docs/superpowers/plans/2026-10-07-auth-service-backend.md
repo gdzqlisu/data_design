@@ -5049,6 +5049,28 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 破窗管理
 8. **破窗账号的 BCrypt 哈希是坏的**：文档里那串 `$2a$10$N9qo8uL...` 对 `password`、`secret`
    都不匹配，登录测试必然 401。换成实测生成并验证过的哈希。
 
+9. **Spring Security 自动配置了内存用户**：`spring-boot-starter-security` 在没有
+   `UserDetailsService` 时会生成一个随机密码并打印在启动日志里。我们的认证完全自研
+   （JWT 过滤器 + 破窗登录），这个用户既用不上又误导运维，已排除
+   `UserDetailsServiceAutoConfiguration`。
+10. **compose 端口写死会撞车**：本机 3306 / 6379 已被别的项目容器占用，写死端口会让
+    `docker compose up` 直接失败。改成 `${MYSQL_PORT:-3306}` / `${REDIS_PORT:-6379}` 可覆盖。
+
+### 真实启动验证（非测试环境）
+
+`./scripts/mvn -DskipTests package` 后用 compose 的 MySQL/Redis 起 jar，实测：
+
+| 请求 | 结果 |
+|---|---|
+| `GET /actuator/health` | 200 `{"status":"UP"}` |
+| `GET /api/me`（无令牌） | 401 `{"code":"unauthenticated"}` |
+| `GET /api/auth/github/authorize`（未配凭据） | 302 → `/login?error=provider_not_configured` |
+| `POST /api/auth/local/login`（未配破窗账号） | 401 `{"code":"invalid_credentials"}` |
+| `GET /api/admin/users`（无令牌） | 401 `{"code":"unauthenticated"}` |
+
+Flyway 在真实 MySQL 上成功建表；未配置破窗管理员时启动日志会明确警告
+「GitHub 不可用时将无法登录系统」。
+
 ### 执行时的操作提醒
 
 - **测试命令一律用 `./scripts/mvn`**，裸 `mvn` 会跑在 Java 8 上。
