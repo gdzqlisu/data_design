@@ -1,0 +1,129 @@
+<h2>登录页视觉方向：先定整体风格</h2>
+<p class="subtitle">
+  技术栈已定：Spring Boot 3 + Spring Security + MySQL/Redis，前端 React 18 + Vite + TypeScript + Ant Design。
+  下面 4 张是登录页的真实渲染原型（不是示意图），只差文案和真实接口。整体风格会一路延续到决策引擎控制台。
+  请挑一个你想要的调性。
+</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;overflow:hidden;">
+      <div style="height:280px;background:linear-gradient(165deg,#0e2a58 0%,#123a7a 55%,#0b2347 100%);display:flex;align-items:center;justify-content:center;position:relative;">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:26px 26px;"></div>
+        <div style="position:relative;width:300px;background:#fff;border-radius:6px;border-top:3px solid #1d4ed8;padding:22px 24px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6);font-family:ui-sans-serif,system-ui,'PingFang SC',sans-serif;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <span style="width:26px;height:26px;border-radius:4px;background:#1d4ed8;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700;">风</span>
+            <span style="font-weight:600;font-size:13px;color:#0f172a;letter-spacing:.02em;">决策引擎控制台</span>
+          </div>
+          <div style="font-size:16px;font-weight:600;color:#0f172a;margin-bottom:4px;">登录</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.6;margin-bottom:16px;">使用企业账号登录信贷风控决策引擎</div>
+          <div style="height:34px;border:1px solid #d7dfec;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#1f2937;margin-bottom:8px;background:#fff;">
+            <svg viewBox="0 0 16 16" width="14" height="14"><path fill="#181717" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            通过 GitHub 登录
+          </div>
+          <div style="height:34px;border:1px solid #d7dfec;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#1f2937;background:#fff;">
+            <span style="width:13px;height:13px;border-radius:50%;background:conic-gradient(#4285F4 0 25%,#34A853 0 50%,#FBBC05 0 75%,#EA4335 0);"></span>
+            通过 Google 登录
+          </div>
+          <div style="margin-top:14px;padding-top:11px;border-top:1px solid #eef1f6;font-size:9.5px;color:#94a3b8;line-height:1.6;">登录即代表你已阅读并同意《服务条款》与《数据安全承诺》</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · 稳健金融蓝</h3>
+      <p>深蓝渐变 + 直角卡片 + 顶部强调条。银行/风控系统的熟悉语言，可信、稳重、不出错，评审和客户最容易接受。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;overflow:hidden;">
+      <div style="height:280px;background:radial-gradient(420px 200px at 80% 0%,rgba(34,211,238,.22),transparent 65%),#080c12;display:flex;align-items:center;justify-content:center;position:relative;">
+        <div style="position:relative;width:300px;background:#101720;border:1px solid #1e2a38;border-radius:14px;padding:22px 24px;box-shadow:0 0 0 1px rgba(34,211,238,.08),0 24px 50px -22px rgba(34,211,238,.35);font-family:ui-sans-serif,system-ui,'PingFang SC',sans-serif;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <span style="width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,#22d3ee,#0ea5e9);display:grid;place-items:center;color:#04141c;font-size:13px;font-weight:800;">⚡</span>
+            <span style="font-weight:600;font-size:13px;color:#e6edf6;letter-spacing:.02em;">RiskEngine</span>
+            <span style="margin-left:auto;font-size:9px;color:#22d3ee;border:1px solid rgba(34,211,238,.35);border-radius:999px;padding:2px 7px;">v1.0</span>
+          </div>
+          <div style="font-size:16px;font-weight:600;color:#e6edf6;margin-bottom:4px;">登录到控制台</div>
+          <div style="font-size:11px;color:#7d8da3;line-height:1.6;margin-bottom:16px;">策略配置 · 决策流编排 · 实时监控</div>
+          <div style="height:34px;border:1px solid #26374a;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#e6edf6;margin-bottom:8px;background:#151f2b;">
+            <svg viewBox="0 0 16 16" width="14" height="14"><path fill="#e6edf6" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            使用 GitHub 登录
+          </div>
+          <div style="height:34px;border:1px solid #26374a;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#b9c6d6;background:transparent;">
+            <span style="width:13px;height:13px;border-radius:50%;background:conic-gradient(#4285F4 0 25%,#34A853 0 50%,#FBBC05 0 75%,#EA4335 0);"></span>
+            使用 Google 登录
+          </div>
+          <div style="margin-top:14px;padding-top:11px;border-top:1px solid #1e2a38;font-size:9.5px;color:#5c6b7f;line-height:1.6;">仅限授权人员访问，所有操作留痕审计</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · 深色数据平台</h3>
+      <p>近黑底 + 青色高亮 + 圆角卡片。像监控大盘/开发工具，长时间盯盘不刺眼，数据密集页面表现最好；但偏「技术感」，对传统银行客户略陌生。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;overflow:hidden;">
+      <div style="height:280px;background:#f6f7f9;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #e9ecf1;">
+        <div style="width:300px;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:24px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 12px 28px -22px rgba(16,24,40,.35);font-family:ui-sans-serif,system-ui,'PingFang SC',sans-serif;">
+          <div style="width:30px;height:30px;border-radius:9px;background:#111827;display:grid;place-items:center;color:#fff;font-size:14px;margin-bottom:18px;">◧</div>
+          <div style="font-size:17px;font-weight:600;color:#0b0f19;letter-spacing:-.01em;margin-bottom:5px;">登录决策引擎</div>
+          <div style="font-size:11.5px;color:#6b7280;line-height:1.65;margin-bottom:20px;">一个账号，进入全部策略与决策能力。</div>
+          <div style="height:36px;border-radius:8px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:500;margin-bottom:9px;">
+            <svg viewBox="0 0 16 16" width="14" height="14"><path fill="#fff" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            继续使用 GitHub
+          </div>
+          <div style="height:36px;border:1px solid #e6e8ec;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#1f2937;">
+            <span style="width:13px;height:13px;border-radius:50%;background:conic-gradient(#4285F4 0 25%,#34A853 0 50%,#FBBC05 0 75%,#EA4335 0);"></span>
+            继续使用 Google
+          </div>
+          <div style="margin-top:16px;font-size:9.5px;color:#9ca3af;line-height:1.6;">本系统仅对内部授权人员开放，不提供自助注册</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · 极简克制</h3>
+      <p>浅灰底 + 大量留白 + 黑色主按钮。类似 Linear / Stripe 的现代 SaaS 气质，干净专业、界面密度低；但视觉存在感弱，不容易「显得像一套风控系统」。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;overflow:hidden;">
+      <div style="height:280px;background:radial-gradient(380px 200px at 15% 10%,rgba(217,119,6,.18),transparent 60%),#14110c;display:flex;align-items:center;justify-content:center;">
+        <div style="width:300px;background:#faf7f2;border-radius:10px;padding:22px 24px;box-shadow:0 22px 46px -22px rgba(0,0,0,.75);border:1px solid rgba(217,119,6,.22);font-family:ui-sans-serif,system-ui,'PingFang SC',sans-serif;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <span style="width:26px;height:26px;border-radius:50%;border:1.5px solid #b45309;display:grid;place-items:center;color:#b45309;font-size:12px;font-weight:700;">衡</span>
+            <span style="font-size:13px;font-weight:600;color:#241f16;letter-spacing:.16em;">衡 · 决策引擎</span>
+          </div>
+          <div style="font-size:17px;font-weight:600;color:#241f16;font-family:Georgia,'Songti SC',serif;margin-bottom:5px;">登录</div>
+          <div style="font-size:11px;color:#78716c;line-height:1.65;margin-bottom:16px;">以数据为尺，量度每一次授信</div>
+          <div style="height:35px;border-radius:6px;background:#241f16;color:#f5efe6;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;margin-bottom:8px;">
+            <svg viewBox="0 0 16 16" width="14" height="14"><path fill="#f5efe6" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            GitHub 登录
+          </div>
+          <div style="height:35px;border:1px solid #e4d9cb;border-radius:6px;background:#fffdfa;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#44403c;">
+            <span style="width:13px;height:13px;border-radius:50%;background:conic-gradient(#4285F4 0 25%,#34A853 0 50%,#FBBC05 0 75%,#EA4335 0);"></span>
+            Google 登录
+          </div>
+          <div style="margin-top:14px;padding-top:11px;border-top:1px solid #ece3d7;font-size:9.5px;color:#a8a29e;line-height:1.6;">访问行为将被完整记录，用于合规审计</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D · 墨色 + 琥珀</h3>
+      <p>暖黑底 + 米白卡片 + 琥珀点缀，标题用衬线。有质感和辨识度，不像又一套蓝色风控系统；风险是客户可能觉得「不够传统严肃」。</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:28px;">
+  <h3>选择时请一并考虑</h3>
+  <p class="subtitle" style="line-height:1.9;">
+    这套风格不会只用在登录页。决策引擎控制台里最重的是<strong>决策流编排画布</strong>、<strong>规则/评分卡配置表</strong>、<strong>命中监控大盘</strong>——
+    都是高密度信息页面。A 和 B 在这类页面更稳，C 最干净但需要更强的排版功力，D 最特别但要在图表配色上多做一层适配。
+  </p>
+</div>
