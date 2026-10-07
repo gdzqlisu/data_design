@@ -43,32 +43,37 @@ public class RefreshTokenService {
         String userKey = USER_SET_PREFIX + userId;
         redis.opsForSet().add(userKey, jti);
         redis.expire(userKey, ttl);
-        return new IssuedRefreshToken(jti + "." + secret, jti, record.expiresAt());
+        return new IssuedRefreshToken(jti + "." + secret, jti, userId, record.expiresAt());
     }
 
-    public IssuedRefreshToken rotate(String rawToken, String userAgent) {
+    /**
+     * 只校验不轮换，供 /api/auth/session 这类只读查询使用。
+     * 轮换式校验会让并发的两个标签页互相把对方判成盗用。
+     */
+    public RefreshTokenRecord inspect(String rawToken) {
         String[] parts = split(rawToken);
-        String jti = parts[0];
-        String secret = parts[1];
-
-        RefreshTokenRecord existing = load(jti);
-        if (existing == null) {
+        RefreshTokenRecord record = load(parts[0]);
+        if (record == null) {
             throw new InvalidRefreshTokenException("刷新令牌不存在、已过期或已被撤销");
         }
         if (!MessageDigest.isEqual(
-                existing.secretHash().getBytes(StandardCharsets.UTF_8),
-                sha256(secret).getBytes(StandardCharsets.UTF_8))) {
+                record.secretHash().getBytes(StandardCharsets.UTF_8),
+                sha256(parts[1]).getBytes(StandardCharsets.UTF_8))) {
             throw new InvalidRefreshTokenException("刷新令牌校验失败");
         }
-        if (existing.rotatedTo() != null) {
-            revokeAllForUser(existing.userId());
-            throw new RefreshTokenReuseException(existing.userId());
+        if (record.rotatedTo() != null) {
+            revokeAllForUser(record.userId());
+            throw new RefreshTokenReuseException(record.userId());
         }
-        if (existing.expiresAt().isBefore(Instant.now())) {
-            delete(jti);
+        if (record.expiresAt().isBefore(Instant.now())) {
+            delete(parts[0]);
             throw new InvalidRefreshTokenException("刷新令牌已过期");
         }
+        return record;
+    }
 
+    public IssuedRefreshToken rotate(String rawToken, String userAgent) {
+        RefreshTokenRecord existing = inspect(rawToken);
         IssuedRefreshToken next = issue(existing.userId(), existing.tokenVersion(), userAgent);
         save(existing.withRotatedTo(next.jti()));
         return next;

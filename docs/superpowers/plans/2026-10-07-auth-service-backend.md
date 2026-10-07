@@ -1588,7 +1588,7 @@ import java.time.Instant;
 /**
  * rawToken 是写进 Cookie 的值，形如 {jti}.{secret}，只在签发时可见一次。
  */
-public record IssuedRefreshToken(String rawToken, String jti, Instant expiresAt) {
+public record IssuedRefreshToken(String rawToken, String jti, long userId, Instant expiresAt) {
 }
 ```
 
@@ -1676,7 +1676,7 @@ public class RefreshTokenService {
         String userKey = USER_SET_PREFIX + userId;
         redis.opsForSet().add(userKey, jti);
         redis.expire(userKey, ttl);
-        return new IssuedRefreshToken(jti + "." + secret, jti, record.expiresAt());
+        return new IssuedRefreshToken(jti + "." + secret, jti, userId, record.expiresAt());
     }
 
     public IssuedRefreshToken rotate(String rawToken, String userAgent) {
@@ -3423,7 +3423,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "auth.oauth.github.client-id=test-client-id",
+        "auth.oauth.github.client-secret=test-client-secret"
+})
 @AutoConfigureMockMvc
 class AuthControllerTest extends IntegrationTestBase {
 

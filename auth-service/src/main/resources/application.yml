@@ -19,6 +19,7 @@ spring:
 
 auth:
   refresh-ttl: 7d
+  cookie-secure: ${COOKIE_SECURE:false}
   oauth:
     console-base-url: ${CONSOLE_BASE_URL:http://localhost:5173}
     github:

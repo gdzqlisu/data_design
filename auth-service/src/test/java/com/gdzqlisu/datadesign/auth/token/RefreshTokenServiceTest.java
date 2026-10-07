@@ -103,4 +103,17 @@ class RefreshTokenServiceTest extends IntegrationTestBase {
                 .isInstanceOf(InvalidRefreshTokenException.class);
         assertThat(service.rotate(b.rawToken(), "JUnit").rawToken()).isNotBlank();
     }
+
+    @Test
+    void inspectValidatesWithoutRotating() {
+        long userId = randomUserId();
+        IssuedRefreshToken token = service.issue(userId, 0, "JUnit");
+
+        RefreshTokenRecord first = service.inspect(token.rawToken());
+        RefreshTokenRecord second = service.inspect(token.rawToken());
+
+        assertThat(first.userId()).isEqualTo(userId);
+        assertThat(second.jti()).isEqualTo(first.jti());
+        assertThat(service.rotate(token.rawToken(), "JUnit").rawToken()).isNotBlank();
+    }
 }
