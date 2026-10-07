@@ -17,7 +17,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
     expect(screen.getByText('信贷风控决策引擎')).toBeInTheDocument();
     vi.unstubAllGlobals();
   });

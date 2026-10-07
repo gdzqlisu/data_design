@@ -47,7 +47,7 @@ describe('路由守卫', () => {
 
     renderAt('/');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
   });
 
   it('待审批用户访问控制台会被送到待审批页', async () => {
@@ -88,7 +88,7 @@ describe('路由守卫', () => {
 
     renderAt('/');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
   });
 
   it('管理员能进入审批队列', async () => {

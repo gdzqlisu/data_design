@@ -1269,7 +1269,7 @@ describe('路由守卫', () => {
 
     renderAt('/');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
   });
 
   it('待审批用户访问控制台会被送到待审批页', async () => {
@@ -1310,7 +1310,7 @@ describe('路由守卫', () => {
 
     renderAt('/');
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
   });
 
   it('管理员能进入审批队列', async () => {
@@ -1512,7 +1512,7 @@ describe('App', () => {
 
     render(<App />);
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: '登录' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', { name: /使用 GitHub 登录/ })).toBeInTheDocument());
     expect(screen.getByText('信贷风控决策引擎')).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
@@ -1604,6 +1604,8 @@ cd .. && git add console-web && git commit -m "feat(console-web): 路由表与�
 **Files:**
 - Modify: `console-web/src/pages/LoginPage.tsx`（替换占位）
 - Modify: `console-web/src/pages/LocalLoginPage.tsx`（替换占位）
+- Modify: `console-web/src/App.test.tsx`、`console-web/src/routes/AppRoutes.test.tsx`
+  （真实登录页没有 `h1 登录`，两处断言改成认 GitHub 按钮）
 - Test: `console-web/src/pages/LoginPage.test.tsx`
 - Test: `console-web/src/pages/LocalLoginPage.test.tsx`
 
@@ -1620,13 +1622,17 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { AuthProvider } from '../auth/AuthContext';
 import { LoginPage } from './LoginPage';
 
 function renderLogin(path = '/login') {
+  // LoginPage 内部用 useAuth()，不包 AuthProvider 会直接抛错。
   render(
-    <MemoryRouter initialEntries={[path]}>
-      <LoginPage />
-    </MemoryRouter>,
+    <AuthProvider>
+      <MemoryRouter initialEntries={[path]}>
+        <LoginPage />
+      </MemoryRouter>
+    </AuthProvider>,
   );
 }
 
@@ -1727,7 +1733,8 @@ describe('LocalLoginPage', () => {
 
     await userEvent.type(screen.getByLabelText('用户名'), 'break-glass-admin');
     await userEvent.type(screen.getByLabelText('密码'), 'password');
-    await userEvent.click(screen.getByRole('button', { name: '登录' }));
+    // antd 会给两个汉字之间插空格（"登 录"），所以用正则匹配
+    await userEvent.click(screen.getByRole('button', { name: /登\s*录/ }));
 
     await waitFor(() => expect(screen.getByRole('heading', { name: '控制台首页' })).toBeInTheDocument());
   });
@@ -1744,7 +1751,8 @@ describe('LocalLoginPage', () => {
 
     await userEvent.type(screen.getByLabelText('用户名'), 'admin');
     await userEvent.type(screen.getByLabelText('密码'), 'wrong');
-    await userEvent.click(screen.getByRole('button', { name: '登录' }));
+    // antd 会给两个汉字之间插空格（"登 录"），所以用正则匹配
+    await userEvent.click(screen.getByRole('button', { name: /登\s*录/ }));
 
     expect(await screen.findByText('用户名或密码不正确')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: '控制台首页' })).not.toBeInTheDocument();
@@ -3195,3 +3203,6 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | 2 | Task 5 · 占位 `LoginPage.tsx` | 计划给占位页只留了 `<h1>登录</h1>`，但 `App.test.tsx` 同时断言产品名，Task 5 阶段 `App.test.tsx` 必挂 | 占位页补上 `<p>信贷风控决策引擎</p>`；Task 6 的真实登录页本来就有 `ds-card__brand` 品牌名，替换后断言继续成立 |
 | 3 | Task 5 · `AppRoutes.test.tsx` | 计划预期 Task 5 新增 6 个路由测试（累计 20），但代码块里只有 5 个：`RequireAuth` 的 `disabled` 分支没有任何测试覆盖 | 补一个「被停用用户访问控制台会被送到登录页」，覆盖 `status === 'disabled'` 分支；累计数回到 20，Task 6–9 的预期数（26/30/35/42）继续成立 |
 | 4 | Task 5 · `AuthContext.tsx` 的 `SessionStatus` | 计划写成 `'loading' \| 'anonymous' \| UserStatus \| 'active'`，但 `AuthContext` 落状态时调了 `session.status.toLowerCase()`，`RequireAuth` 也只比较小写；类型与运行时值不一致，`tsc` 报 TS2367「"rejected" 与 UserStatus 无重叠」，守卫分支在类型层面永远不成立 | 改成字面量小写联合 `'loading' \| 'anonymous' \| 'active' \| 'pending' \| 'rejected' \| 'disabled'`，并去掉不再使用的 `UserStatus` 导入；Task 5 Step 4 补跑 `npm run typecheck` |
+| 5 | Task 6 · `LoginPage.test.tsx` | 测试只包了 `MemoryRouter`，而真实 `LoginPage` 内部调 `useAuth()`，渲染直接抛「useAuth 必须在 AuthProvider 内使用」 | 测试的 `renderLogin` 外面补一层 `AuthProvider`（`LocalLoginPage.test.tsx` 计划里本来就包了，是登录页漏了） |
+| 6 | Task 6 · `LocalLoginPage.test.tsx` | antd 对「正好两个汉字」的按钮会自动插空格，按钮的可访问名是 `登 录`，`getByRole('button', { name: '登录' })` 找不到 | 断言改成 `/登\s*录/`；不动 antd 的展示行为，页面测试也不经过 `ConfigProvider`，改测试更稳 |
+| 7 | Task 6 · `App.test.tsx` / `AppRoutes.test.tsx` | 真实登录页用 `ds-card__brand` 承载品牌名，没有 `h1 登录`，Task 5 的 3 处 `getByRole('heading', { name: '登录' })` 全部失效 | 三处改成断言登录页主操作 `getByRole('button', { name: /使用 GitHub 登录/ })`，并把这两个测试文件补进 Task 6 的 Files 列表 |
