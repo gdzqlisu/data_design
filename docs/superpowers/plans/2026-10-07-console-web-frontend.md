@@ -3246,3 +3246,27 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | `GET /api/me`（后端未起） | 502，nginx 日志为 `connect() failed (111: Connection refused)`，上游解析到 `host.docker.internal` → 192.168.65.254:8080 |
 
 `dist/index.html` 引用 `/assets/index-DDYVLzCl.js` 与 `/assets/index-tlhGNd0v.css`，与 `dist/assets/` 下的实际文件名一致，无 404 风险。
+### 端到端联调验证（计划 B 收尾实测）
+
+本计划的测试全部用手写的 `fetch` mock，只能证明「前端按约定的契约工作」。收尾时又用**真实后端**跑了一遍关键路径，验证契约本身没有偏差：
+
+```bash
+cd console-web && npm run dev                        # 5173
+cd auth-service && SPRING_DATASOURCE_URL='jdbc:mysql://localhost:13306/data_design?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai' \
+  SPRING_DATA_REDIS_PORT=16379 CONSOLE_BASE_URL='http://localhost:5173' \
+  BREAK_GLASS_ADMIN_USERNAME=admin BREAK_GLASS_ADMIN_PASSWORD_HASH='<bcrypt>' \
+  ./scripts/mvn spring-boot:run                      # 8080
+```
+
+| 验证项 | 结果 |
+|---|---|
+| 匿名访问 `/` | 后端 401 → 落到 `/login`，卡片、渐变背景、网格线、GitHub 按钮与设计稿一致 |
+| `/login/local` 破窗登录 | `admin` + 密码登录成功，跳转 `/` 并进入控制台骨架 |
+| 控制台骨架 | 侧栏四个分组、未实现项 `disabled`、面包屑「首页 / 概览」、橙色「开发环境」标识、顶栏 `admin` + `ADMIN` 标签 |
+| 审批队列 | 直接插 `PENDING` 用户后列表正常渲染；行内选「策略」再点通过 → `users.role=STRATEGIST`、`status=ACTIVE`、`approved_by=1`，审计落 `APPROVED {"role":"STRATEGIST","adminId":1}` |
+| 拒绝 | `viewer-wang` → `status=REJECTED`，审计落 `REJECTED` |
+| 用户管理 | 改角色后「保存」由禁用变可用、保存成功后重新禁用；改「只读」落库为 `VIEWER` |
+| 自禁用保护 | 禁用自己 → 后端 400 `cannot_modify_self` → 页面就地 `Alert` 显示「不能禁用自己的账号」 |
+| 禁用 | `octocat` → 状态标签变为 `DISABLED` |
+
+结论：`api/auth.ts`、`api/admin.ts` 里的字段名与状态/角色枚举和后端完全对齐，无需返工。
