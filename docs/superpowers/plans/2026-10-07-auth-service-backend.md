@@ -2767,7 +2767,7 @@ class GitHubOAuthServiceTest extends IntegrationTestBase {
         assertThat(url).contains("state=state-123");
         assertThat(url).contains("code_challenge=challenge-abc");
         assertThat(url).contains("code_challenge_method=S256");
-        assertThat(url).contains("scope=read:user%20user%3Aemail");
+        assertThat(url).contains("scope=read:user%20user:email");
         assertThat(url).contains("client_id=test-client-id");
     }
 
@@ -2961,6 +2961,9 @@ public class GitHubOAuthService {
                 .queryParam("code_challenge", codeChallenge)
                 .queryParam("code_challenge_method", "S256")
                 .build()
+                // 必须 encode()：scope 里的空格不编码会拼出带裸空格的非法 URL。
+                // ':' 保持原样即可，GitHub 接受这两种写法。
+                .encode()
                 .toUriString();
     }
 
