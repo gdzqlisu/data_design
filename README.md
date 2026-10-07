@@ -62,6 +62,14 @@ console-web/      React 控制台（计划 B，尚未创建）
 docker compose -f deploy/docker-compose.yml up -d mysql redis
 ```
 
+本机 3306 / 6379 已被别的项目占用时，用环境变量换端口（compose 里是可覆盖的）：
+
+```bash
+MYSQL_PORT=13306 REDIS_PORT=16379 docker compose -f deploy/docker-compose.yml up -d mysql redis
+SPRING_DATASOURCE_URL='jdbc:mysql://localhost:13306/data_design?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai' \
+SPRING_DATA_REDIS_PORT=16379 ./scripts/mvn spring-boot:run
+```
+
 ### 2. 跑测试
 
 ```bash
