@@ -1982,23 +1982,33 @@ describe('状态页', () => {
   });
 
   it('回调中转页换到令牌后进入控制台', async () => {
+    // 这里挂载了 AuthProvider，它自己也会打 /api/auth/session 与 /api/auth/refresh，
+    // 而且子组件的 effect 先于父组件执行——回调页的 refresh 排在 bootstrap 之前。
+    // 按 URL 分发响应才不依赖调用顺序（用 mockResolvedValueOnce 会错位）。
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(session('ACTIVE'))
-        .mockResolvedValueOnce(jsonResponse(200, { accessToken: 'fresh' }))
-        .mockResolvedValueOnce(
-          jsonResponse(200, {
-            id: 1,
-            displayName: 'octocat',
-            email: null,
-            avatarUrl: null,
-            role: 'MEMBER',
-            status: 'ACTIVE',
-            breakGlass: false,
-          }),
-        ),
+      vi.fn().mockImplementation((url: string) => {
+        if (url === '/api/auth/session') {
+          return Promise.resolve(session('ACTIVE'));
+        }
+        if (url === '/api/auth/refresh') {
+          return Promise.resolve(jsonResponse(200, { accessToken: 'fresh' }));
+        }
+        if (url === '/api/me') {
+          return Promise.resolve(
+            jsonResponse(200, {
+              id: 1,
+              displayName: 'octocat',
+              email: null,
+              avatarUrl: null,
+              role: 'MEMBER',
+              status: 'ACTIVE',
+              breakGlass: false,
+            }),
+          );
+        }
+        return Promise.reject(new Error(`未预期的请求：${url}`));
+      }),
     );
     renderAt('/auth/callback', <AuthCallbackPage />);
 
@@ -3206,3 +3216,4 @@ cd .. && git add console-web deploy README.md && git commit -m "feat(deploy): �
 | 5 | Task 6 · `LoginPage.test.tsx` | 测试只包了 `MemoryRouter`，而真实 `LoginPage` 内部调 `useAuth()`，渲染直接抛「useAuth 必须在 AuthProvider 内使用」 | 测试的 `renderLogin` 外面补一层 `AuthProvider`（`LocalLoginPage.test.tsx` 计划里本来就包了，是登录页漏了） |
 | 6 | Task 6 · `LocalLoginPage.test.tsx` | antd 对「正好两个汉字」的按钮会自动插空格，按钮的可访问名是 `登 录`，`getByRole('button', { name: '登录' })` 找不到 | 断言改成 `/登\s*录/`；不动 antd 的展示行为，页面测试也不经过 `ConfigProvider`，改测试更稳 |
 | 7 | Task 6 · `App.test.tsx` / `AppRoutes.test.tsx` | 真实登录页用 `ds-card__brand` 承载品牌名，没有 `h1 登录`，Task 5 的 3 处 `getByRole('heading', { name: '登录' })` 全部失效 | 三处改成断言登录页主操作 `getByRole('button', { name: /使用 GitHub 登录/ })`，并把这两个测试文件补进 Task 6 的 Files 列表 |
+| 8 | Task 7 · `StatusPages.test.tsx`「回调中转页换到令牌后进入控制台」 | 该用例挂载了 `AuthProvider`，bootstrap 自己也会打 `/api/auth/session` 与 `/api/auth/refresh`，而子组件 effect 先于父组件执行，实际调用序是 `refresh` → `session` → `/api/me`；计划里 3 个 `mockResolvedValueOnce` 全部错位——bootstrap 拿到 `{accessToken}` 当会话、在 `status.toLowerCase()` 上抛 TypeError 被自己的 catch 吞掉并置为 anonymous，断言只是被 `waitFor` 抢在状态翻转之前满足了，属于**假绿** | 改用按 URL 分发的 `mockImplementation`：回调页与 bootstrap 各自拿到正确响应，断言不再依赖调用顺序 |
