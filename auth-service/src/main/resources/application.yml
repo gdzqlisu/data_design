@@ -19,6 +19,9 @@ spring:
 
 auth:
   refresh-ttl: 7d
+  break-glass:
+    username: ${BREAK_GLASS_ADMIN_USERNAME:}
+    password-hash: ${BREAK_GLASS_ADMIN_PASSWORD_HASH:}
   cookie-secure: ${COOKIE_SECURE:false}
   oauth:
     console-base-url: ${CONSOLE_BASE_URL:http://localhost:5173}

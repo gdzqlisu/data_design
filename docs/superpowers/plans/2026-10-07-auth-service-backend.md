@@ -124,7 +124,7 @@ deploy/
 - Create: `auth-service/src/main/resources/application.yml`
 - Test: `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/AuthServiceApplicationTests.java`
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/AuthServiceApplicationTests.java`：
 
@@ -161,7 +161,7 @@ class AuthServiceApplicationTests {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test
@@ -169,7 +169,7 @@ cd auth-service && ./scripts/mvn -q test
 
 预期：失败，`./scripts/mvn: No such file or directory`（脚本还不存在）。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/scripts/mvn`：
 
@@ -268,7 +268,7 @@ management:
         include: health,info
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 chmod +x auth-service/scripts/mvn
@@ -279,7 +279,7 @@ cd auth-service && ./scripts/mvn -q test
 若报 `invalid target release: 17`，说明 `~/.mavenrc` 绕过失败，
 检查 `./scripts/mvn -v` 输出的 Java 版本应为 `17.0.19`。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 工程骨架与健康检查"
@@ -298,7 +298,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 工程骨架
 - Modify: `auth-service/src/main/resources/application.yml`
 - Modify: `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/AuthServiceApplicationTests.java`（改为继承 `IntegrationTestBase`）
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/IntegrationTestBase.java`：
 
@@ -396,7 +396,7 @@ class DatabaseMigrationTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=DatabaseMigrationTest
@@ -404,7 +404,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=DatabaseMigrationTest
 
 预期：编译失败，`package org.testcontainers does not exist`，且 `V1__init.sql` 尚不存在。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `deploy/docker-compose.yml`：
 
@@ -609,7 +609,7 @@ management:
 class AuthServiceApplicationTests extends IntegrationTestBase {
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test
@@ -623,7 +623,7 @@ cd auth-service && ./scripts/mvn -q test
 若报 `Could not find a valid Docker environment`，八成是 API 版本而不是 Docker 没起来，
 按「环境前提」那一节的两条 curl 自查。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service deploy && git commit -m "feat(auth-service): 本地依赖编排、Testcontainers 基座与初始建表"
@@ -643,7 +643,7 @@ cd .. && git add auth-service deploy && git commit -m "feat(auth-service): 本�
 - Create: `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/user/UserIdentityRepository.java`
 - Test: `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/user/UserRepositoryTest.java`
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/user/UserRepositoryTest.java`：
 
@@ -729,7 +729,7 @@ class UserRepositoryTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=UserRepositoryTest
@@ -737,7 +737,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=UserRepositoryTest
 
 预期：编译失败，`cannot find symbol: class User`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/user/Role.java`：
 
@@ -1141,7 +1141,7 @@ public interface UserIdentityRepository extends JpaRepository<UserIdentity, Long
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=UserRepositoryTest
@@ -1149,7 +1149,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=UserRepositoryTest
 
 预期：`BUILD SUCCESS`，4 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 用户与身份领域模型"
@@ -1168,7 +1168,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 用户与身
 - Modify: `auth-service/pom.xml`（加 jjwt）
 - Modify: `auth-service/src/main/resources/application.yml`（加 `auth.jwt`）
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/config/JwtServiceTest.java`：
 
@@ -1234,7 +1234,7 @@ class JwtServiceTest {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=JwtServiceTest
@@ -1242,7 +1242,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=JwtServiceTest
 
 预期：编译失败，`cannot find symbol: class JwtService`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 在 `auth-service/pom.xml` 的 `</dependencies>` 之前追加：
 
@@ -1398,7 +1398,7 @@ auth:
     issuer: data-design
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=JwtServiceTest
@@ -1406,7 +1406,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=JwtServiceTest
 
 预期：`BUILD SUCCESS`，4 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): JWT 签发与校验"
@@ -1428,7 +1428,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): JWT 签发�
 
 **设计要点：** Cookie 里放的是 `{jti}.{secret}`，Redis 里只存 secret 的 SHA-256，避免 Redis 泄露即等价于令牌泄露。`rt:{jti}` 存记录，`rtu:{userId}` 是一个 Set，用于一次性撤销该用户整条刷新链（复用检测触发时要用）。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/token/RefreshTokenServiceTest.java`：
 
@@ -1541,7 +1541,7 @@ class RefreshTokenServiceTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=RefreshTokenServiceTest
@@ -1549,7 +1549,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=RefreshTokenServiceTest
 
 预期：编译失败，`cannot find symbol: class RefreshTokenService`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/token/RefreshTokenRecord.java`：
 
@@ -1819,7 +1819,7 @@ auth:
 
 （与已有的 `auth.jwt` 合并到同一个 `auth:` 块下，不要写成两个 `auth:` 顶层键。）
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=RefreshTokenServiceTest
@@ -1827,7 +1827,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=RefreshTokenServiceTest
 
 预期：`BUILD SUCCESS`，7 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 刷新令牌服务，支持轮换与复用检测"
@@ -1857,7 +1857,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 刷新令牌
 （access token 在 `Authorization` 头里），因此关闭 CSRF 是安全的。计划 B 里 refresh token 走
 Cookie，刷新接口会额外校验 `Origin`，届时在 Task 10 一并处理。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/security/JwtAuthenticationFilterTest.java`：
 
@@ -1966,7 +1966,7 @@ class JwtAuthenticationFilterTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=JwtAuthenticationFilterTest
@@ -1974,7 +1974,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=JwtAuthenticationFilterTest
 
 预期：编译失败，`cannot find symbol: class TokenVersionCache`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 在 `auth-service/pom.xml` 的 `</dependencies>` 之前追加：
 
@@ -2255,7 +2255,7 @@ public class MeController {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=JwtAuthenticationFilterTest
@@ -2263,7 +2263,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=JwtAuthenticationFilterTest
 
 预期：`BUILD SUCCESS`，6 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 请求鉴权过滤器与安全配置
@@ -2286,7 +2286,7 @@ token_version 走 Redis 缓存，改角色或禁用账号时主动 evict。"
 **设计要点：** `audit_logs.user_id` 故意不加外键，账号被删也要留下审计痕迹。写入审计失败不能影响主流程，
 `record` 内部捕获异常只记日志——审计丢一条可以接受，登录被审计拖挂不行。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/audit/AuditServiceTest.java`：
 
@@ -2370,7 +2370,7 @@ class AuditServiceTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=AuditServiceTest
@@ -2378,7 +2378,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=AuditServiceTest
 
 预期：编译失败，`cannot find symbol: class AuditService`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/audit/AuditEvent.java`：
 
@@ -2597,7 +2597,7 @@ public class AuditService {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=AuditServiceTest
@@ -2605,7 +2605,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=AuditServiceTest
 
 预期：`BUILD SUCCESS`，5 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 审计服务与 12 种认证事件"
@@ -2634,7 +2634,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 审计服务
 **state 与 PKCE：** `state` 是一次性随机串，和 `code_verifier` 一起存 Redis 10 分钟，用 `getAndDelete`
 取出即删，天然防重放；PKCE 防授权码被截获后直接兑换。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/oauth/OAuthStateStoreTest.java`：
 
@@ -2797,7 +2797,7 @@ class GitHubOAuthServiceTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='OAuthStateStoreTest,GitHubOAuthServiceTest'
@@ -2805,7 +2805,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='OAuthStateStoreTest,GitHubOAuth
 
 预期：编译失败，`cannot find symbol: class OAuthStateStore`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/oauth/OAuthProperties.java`：
 
@@ -3110,7 +3110,7 @@ public class OAuthClientConfig {
       redirect-uri: ${GITHUB_REDIRECT_URI:http://localhost:5173/api/auth/github/callback}
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='OAuthStateStoreTest,GitHubOAuthServiceTest'
@@ -3118,7 +3118,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='OAuthStateStoreTest,GitHubOAuth
 
 预期：`BUILD SUCCESS`，5 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): GitHub OAuth 客户端与授权请求暂存"
@@ -3137,7 +3137,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): GitHub OAuth
 身份查不到就建 `PENDING`，查得到就按既有 `status` 决定审计事件——**绝不因为「邮箱相同」把两个身份合并**，
 GitHub 邮箱未经企业域校验，自动合并等于开了一个越权入口。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/user/UserProvisioningServiceTest.java`：
 
@@ -3251,7 +3251,7 @@ class UserProvisioningServiceTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=UserProvisioningServiceTest
@@ -3259,7 +3259,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=UserProvisioningServiceTest
 
 预期：编译失败，`cannot find symbol: class UserProvisioningService`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/user/LoginOutcome.java`：
 
@@ -3338,7 +3338,7 @@ public class UserProvisioningService {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=UserProvisioningServiceTest
@@ -3346,7 +3346,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=UserProvisioningServiceTest
 
 预期：`BUILD SUCCESS`，5 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 用户开通状态机，首登建待审批账号"
@@ -3377,7 +3377,7 @@ refresh token 在 httpOnly Cookie 里（`ds_rt`，`SameSite=Lax`，生产环境�
 `POST /api/auth/refresh` 若带了 `Origin` 且与 `auth.oauth.console-base-url` 不同源，直接 403
 `cross_origin`——这是 Cookie 鉴权下廉价且有效的 CSRF 兜底。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 在 `RefreshTokenServiceTest` 中追加：
 
@@ -3533,7 +3533,7 @@ class AuthControllerTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='RefreshTokenServiceTest,AuthControllerTest'
@@ -3541,7 +3541,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='RefreshTokenServiceTest,AuthCon
 
 预期：编译失败，`cannot find symbol: method inspect`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 把 `RefreshTokenService` 的 `rotate` 改为复用新抽出的 `inspect`，并在类中插入：
 
@@ -3985,7 +3985,7 @@ public class AuthController {
   cookie-secure: ${COOKIE_SECURE:false}
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='RefreshTokenServiceTest,AuthControllerTest'
@@ -3994,7 +3994,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='RefreshTokenServiceTest,AuthCon
 预期：`BUILD SUCCESS`，17 个测试通过（RefreshTokenService 8 个 + AuthController 9 个，
 其中 `refreshDetectsTokenReuseAndRevokesChain` 与 `refreshIssuesAccessTokenOnlyForActiveUser` 各断言多点）。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 认证控制器、会话查询与刷新令牌 Cookie"
@@ -4019,7 +4019,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 认证控制
 
 另外管理员不能对自己禁用或降级。这不是产品偏好，是防呆：一旦做错就再也没人能进系统了。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/admin/AdminUserControllerTest.java`：
 
@@ -4229,7 +4229,7 @@ class AdminUserControllerTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=AdminUserControllerTest
@@ -4237,7 +4237,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=AdminUserControllerTest
 
 预期：编译失败，`cannot find symbol: class ApproveRequest`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `auth-service/src/main/java/com/gdzqlisu/datadesign/auth/admin/ApproveRequest.java`：
 
@@ -4460,7 +4460,7 @@ public class AdminUserController {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest=AdminUserControllerTest
@@ -4468,7 +4468,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest=AdminUserControllerTest
 
 预期：`BUILD SUCCESS`，9 个测试通过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 cd .. && git add auth-service && git commit -m "feat(auth-service): 管理员审批、改角色与禁用
@@ -4495,7 +4495,7 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 管理员审
 **设计要点：** 破窗账号是配置驱动的——每次启动都从环境变量校正，所以运维就算手滑把它禁用或降级，
 重启即恢复。密码只存 BCrypt 哈希，明文从不落库、不入日志。入口不出现在任何前端导航里。
 
-- [ ] **Step 1: 先写失败的测试**
+- [x] **Step 1: 先写失败的测试**
 
 创建 `auth-service/src/test/java/com/gdzqlisu/datadesign/auth/bootstrap/BreakGlassAdminInitializerTest.java`：
 
@@ -4515,7 +4515,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = {
         "auth.break-glass.username=break-glass-admin",
-        "auth.break-glass.password-hash=$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+        "auth.break-glass.password-hash=$2a$10$wvDCi/W8YLzoJ/ZIZOLuKODuTUZ.WJpK3mLNaTOpEii6VG4G/81Dy"
 })
 class BreakGlassAdminInitializerTest extends IntegrationTestBase {
 
@@ -4541,7 +4541,7 @@ class BreakGlassAdminInitializerTest extends IntegrationTestBase {
 
         User reloaded = users.findById(admin.getId()).orElseThrow();
         boolean changed = reloaded.repairAsBreakGlass(
-                "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy");
+                "$2a$10$wvDCi/W8YLzoJ/ZIZOLuKODuTUZ.WJpK3mLNaTOpEii6VG4G/81Dy");
         users.saveAndFlush(reloaded);
 
         User repaired = users.findById(admin.getId()).orElseThrow();
@@ -4581,7 +4581,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = {
         "auth.break-glass.username=break-glass-admin",
-        "auth.break-glass.password-hash=$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+        "auth.break-glass.password-hash=$2a$10$wvDCi/W8YLzoJ/ZIZOLuKODuTUZ.WJpK3mLNaTOpEii6VG4G/81Dy"
 })
 @AutoConfigureMockMvc
 class LocalLoginTest extends IntegrationTestBase {
@@ -4674,7 +4674,7 @@ class LocalLoginTest extends IntegrationTestBase {
 }
 ```
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [x] **Step 2: 跑测试，确认失败**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='BreakGlassAdminInitializerTest,LocalLoginTest'
@@ -4682,7 +4682,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='BreakGlassAdminInitializerTest,
 
 预期：编译失败，`cannot find symbol: method repairAsBreakGlass`。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 在 `User.java` 中插入：
 
@@ -4967,7 +4967,7 @@ public class LocalLoginController {
     password-hash: ${BREAK_GLASS_ADMIN_PASSWORD_HASH:}
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [x] **Step 4: 跑测试，确认通过**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test -Dtest='BreakGlassAdminInitializerTest,LocalLoginTest'
@@ -4975,7 +4975,7 @@ cd auth-service && ./scripts/mvn -q test -Dtest='BreakGlassAdminInitializerTest,
 
 预期：`BUILD SUCCESS`，6 个测试通过。
 
-- [ ] **Step 5: 全量回归并提交**
+- [x] **Step 5: 全量回归并提交**
 
 ```bash
 cd auth-service && ./scripts/mvn -q test
@@ -5024,6 +5024,35 @@ cd .. && git add auth-service && git commit -m "feat(auth-service): 破窗管理
 - `AuthController.randomUrlSafe` 原为 static 却要用注入的 `random` → 改为实例方法
 - 文件结构清单与实际 Task 清单比对后重写（原列了不存在的 `RedisConfig`、`TokenPair`、`GitHubOAuthSuccessHandler` 等）
 - 每个 Task 的「N 个测试通过」与实际 `@Test` 数量逐一核对（Task 10 由 15 更正为 17）
+
+### 执行过程中新发现并修正的问题
+
+计划是纸上的，跑起来才知道哪里对不上。以下 8 处是执行时暴露的真实缺陷，代码与本文档已同步：
+
+1. **Docker Engine 29 的 API 版本**：Testcontainers 1.20.3 内置 docker-java 默认请求 v1.32，
+   而引擎最低支持 1.40，报错却是误导性的 `Could not find a valid Docker environment`。
+   已在 surefire 固定 `api.version=1.44`，并写进「环境前提」。
+2. **`JwtAuthenticationFilter` 检查顺序**：原先先比 `token_version`，禁用账号会自增该值，
+   于是被禁用用户永远拿到 401，走不到 403 的账号状态分支。改成先判账号状态。
+   连带统一语义：禁用 → 403 `account_not_active`，改角色 → 401 `token_revoked`。
+3. **`users.email` 唯一约束**：与「绝不按邮箱合并账号」的设计直接冲突，
+   两个 GitHub 身份共用邮箱时第二个会被数据库拒绝。改为普通索引。
+4. **`IssuedRefreshToken` 缺 `userId`**：`AuthController.refresh` 需要它定位账号，补上该字段。
+5. **`authorizeUrl` 未编码**：scope 里的空格直接拼进 URL，生成的是非法 URL。改为 `encode()`；
+   同时把测试断言从 `%3A` 放宽为 `:`——GitHub 接受未被编码的冒号，只有空格必须编码。
+6. **`AuthControllerTest` 缺 OAuth 凭据属性**：没有 client-id/secret 时控制器走「未配置」分支，
+   测试拿不到 GitHub 跳转。用 `@SpringBootTest(properties = ...)` 补上。
+7. **`AdminUserControllerTest` 缺 AssertJ 静态导入**，以及禁用/改角色两处状态码与第 2 条对齐。
+8. **破窗账号的 BCrypt 哈希是坏的**：文档里那串 `$2a$10$N9qo8uL...` 对 `password`、`secret`
+   都不匹配，登录测试必然 401。换成实测生成并验证过的哈希。
+
+### 执行时的操作提醒
+
+- **测试命令一律用 `./scripts/mvn`**，裸 `mvn` 会跑在 Java 8 上。
+- 增删测试类后建议 `./scripts/mvn clean test`：增量编译偶尔会留下坏 class 文件，
+  报错形式是 `TestEngine with ID 'junit-jupiter' failed to discover tests`，
+  看到这个先 clean，不要怀疑代码。
+- 全量回归耗时约 15 秒（容器常驻复用），12 个 Task 全部完成时是 **64 个测试**。
 
 ### 一致性与占位符检查
 

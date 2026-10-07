@@ -84,6 +84,33 @@ public class User {
         return user;
     }
 
+    /**
+     * 每次启动按配置校正破窗账号。返回是否有字段被改动。
+     */
+    public boolean repairAsBreakGlass(String configuredPasswordHash) {
+        boolean changed = false;
+        if (this.role != Role.ADMIN) {
+            this.role = Role.ADMIN;
+            changed = true;
+        }
+        if (this.status != UserStatus.ACTIVE) {
+            this.status = UserStatus.ACTIVE;
+            changed = true;
+        }
+        if (!this.breakGlass) {
+            this.breakGlass = true;
+            changed = true;
+        }
+        if (configuredPasswordHash != null && !configuredPasswordHash.equals(this.passwordHash)) {
+            this.passwordHash = configuredPasswordHash;
+            changed = true;
+        }
+        if (changed) {
+            this.updatedAt = Instant.now();
+        }
+        return changed;
+    }
+
     public void approve(Role grantedRole, Long approverId) {
         this.role = grantedRole;
         this.status = UserStatus.ACTIVE;
